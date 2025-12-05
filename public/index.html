@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Torneo de Axelrod - Dilema del Prisionero</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <header class="header">
+            <div class="header-content">
+                <h1><i class="fas fa-chess"></i> Torneo de Axelrod</h1>
+                <p>Dilema del Prisionero Iterado</p>
+            </div>
+        </header>
+
+        <!-- Control Panel -->
+        <section class="control-panel">
+            <div class="panel-content">
+                <h2><i class="fas fa-cogs"></i> Configuración del Torneo</h2>
+                
+                <div class="config-grid">
+                    <div class="config-item">
+                        <label for="rounds">Rondas por enfrentamiento:</label>
+                        <input type="number" id="rounds" value="100" min="10" max="1000" step="10">
+                    </div>
+                    
+                    <div class="config-item">
+                        <label>Estrategias disponibles:</label>
+                        <div id="strategies-list" class="strategies-grid">
+                            <!-- Se carga dinámicamente -->
+                        </div>
+                    </div>
+                </div>
+
+                <div class="actions">
+                    <button id="run-tournament" class="btn-primary">
+                        <i class="fas fa-play"></i> Ejecutar Torneo
+                    </button>
+                    <button id="select-all" class="btn-secondary">
+                        <i class="fas fa-check-double"></i> Seleccionar Todo
+                    </button>
+                    <button id="clear-all" class="btn-secondary">
+                        <i class="fas fa-times"></i> Limpiar Selección
+                    </button>
+                </div>
+            </div>
+        </section>
+
+        <!-- Loading Indicator -->
+        <div id="loading" class="loading hidden">
+            <div class="spinner"></div>
+            <p>Ejecutando torneo...</p>
+        </div>
+
+        <!-- Results Section -->
+        <section id="results-section" class="results-section hidden">
+            <!-- Tournament Summary -->
+            <div class="summary-card">
+                <h2><i class="fas fa-trophy"></i> Resumen del Torneo</h2>
+                <div id="tournament-summary" class="summary-grid">
+                    <!-- Se llena dinámicamente -->
+                </div>
+            </div>
+
+            <!-- Ranking Table -->
+            <div class="ranking-card">
+                <h2><i class="fas fa-medal"></i> Ranking Final</h2>
+                <div id="ranking-table">
+                    <!-- Se llena dinámicamente -->
+                </div>
+            </div>
+
+            <!-- Charts Section -->
+            <div class="charts-section">
+                <div class="chart-container">
+                    <h3><i class="fas fa-chart-bar"></i> Puntuación por Estrategia</h3>
+                    <canvas id="scores-chart"></canvas>
+                </div>
+                
+                <div class="chart-container">
+                    <h3><i class="fas fa-chart-pie"></i> Tasa de Cooperación</h3>
+                    <canvas id="cooperation-chart"></canvas>
+                </div>
+                
+                <div class="chart-container">
+                    <h3><i class="fas fa-chart-line"></i> Rendimiento por Enfrentamientos</h3>
+                    <canvas id="performance-chart"></canvas>
+                </div>
+            </div>
+
+            <!-- Detailed Results -->
+            <div class="details-section">
+                <h2><i class="fas fa-list"></i> Resultados Detallados</h2>
+                <div class="tabs">
+                    <button class="tab-button active" data-tab="matches">Enfrentamientos</button>
+                    <button class="tab-button" data-tab="strategies">Por Estrategia</button>
+                    <button class="tab-button" data-tab="matrix">Matriz de Resultados</button>
+                </div>
+                
+                <div id="tab-matches" class="tab-content active">
+                    <div id="matches-table"></div>
+                </div>
+                
+                <div id="tab-strategies" class="tab-content">
+                    <div id="strategies-details"></div>
+                </div>
+                
+                <div id="tab-matrix" class="tab-content">
+                    <div id="results-matrix"></div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Payoff Matrix Info -->
+        <section class="info-section">
+            <h2><i class="fas fa-info-circle"></i> Matriz de Pagos</h2>
+            <div class="payoff-matrix">
+                <div class="matrix-table">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th></th>
+                                <th>Oponente Coopera</th>
+                                <th>Oponente Traiciona</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <th>Yo Coopero</th>
+                                <td class="cc">3, 3</td>
+                                <td class="cd">0, 5</td>
+                            </tr>
+                            <tr>
+                                <th>Yo Traiciono</th>
+                                <td class="dc">5, 0</td>
+                                <td class="dd">1, 1</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div class="matrix-explanation">
+                    <h3>Interpretación:</h3>
+                    <ul>
+                        <li><strong>CC (3,3):</strong> Ambos cooperan - Recompensa mutua</li>
+                        <li><strong>CD (0,5):</strong> Yo coopero, oponente traiciona - Soy explotado</li>
+                        <li><strong>DC (5,0):</strong> Yo traiciono, oponente coopera - Exploto al oponente</li>
+                        <li><strong>DD (1,1):</strong> Ambos traicionan - Castigo mutuo</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <!-- Footer -->
+        <footer class="footer">
+            <p>&copy; 2024 Torneo de Axelrod - Implementación del Dilema del Prisionero Iterado</p>
+        </footer>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>
