@@ -6,7 +6,9 @@
   "scripts": {
     "start": "node src/index.js",
     "tournament": "node src/index.js",
+    "tournament:turnos": "node src/index.js --game=turnos",
     "web": "node src/web-server.js",
+    "web:turnos": "node src/web-server.js --game=turnos",
     "dev": "nodemon src/web-server.js"
   },
   "dependencies": {

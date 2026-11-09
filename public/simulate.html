@@ -210,13 +210,13 @@
                         <tbody>
                             <tr>
                                 <th><i class="fas fa-handshake"></i> Coopero</th>
-                                <td class="cc">+3, +3</td>
-                                <td class="cd">0, +5</td>
+                                <td class="cc" data-payoff="CC" data-format="plus">+3, +3</td>
+                                <td class="cd" data-payoff="CD" data-format="plus">0, +5</td>
                             </tr>
                             <tr>
                                 <th><i class="fas fa-times-circle"></i> Traiciono</th>
-                                <td class="dc">+5, 0</td>
-                                <td class="dd">+1, +1</td>
+                                <td class="dc" data-payoff="DC" data-format="plus">+5, 0</td>
+                                <td class="dd" data-payoff="DD" data-format="plus">+1, +1</td>
                             </tr>
                         </tbody>
                     </table>
@@ -241,6 +241,7 @@
         </footer>
     </div>
 
+    <script src="game-matrix.js"></script>
     <script src="simulate.js"></script>
 </body>
 </html>

@@ -27,6 +27,46 @@ También puedes especificar el número de rondas:
 node src/index.js 200
 ```
 
+## Juegos (matriz de pagos)
+
+| Juego | CC | CD (yo, rival) | DC (yo, rival) | DD |
+| --- | --- | --- | --- | --- |
+| `clasico` (por defecto) | 3, 3 | 0, 5 | 5, 0 | 1, 1 |
+| `turnos` | 3, 3 | 0, 8 | 8, 0 | 1, 1 |
+
+```bash
+npm run tournament:turnos      # torneo en consola con el juego "turnos"
+npm run web:turnos             # interfaz web con el juego "turnos"
+node src/index.js 200 --game=turnos
+```
+
+La interfaz web muestra siempre la matriz del juego activo.
+
+## Variante: ruido y final incierto
+
+En el torneo clásico gana Tit for Tat. Esta variante cambia las reglas para que
+copiar una estrategia conocida ya no alcance:
+
+```bash
+node src/index.js --noise=0.05 --end=0.005 --reps=50 --seed=1
+```
+
+| Opción | Efecto |
+| --- | --- |
+| `--noise=0.05` | Cada jugada sale al revés (C↔D) con 5% de probabilidad. Tu historial y el del rival muestran lo que **se ejecutó**, no lo que se quiso hacer: no podés distinguir un error de una traición. |
+| `--end=0.005` | Después de cada ronda el match termina con 0.5% de probabilidad (~200 rondas en promedio). Nadie sabe cuál es la última ronda. Ignora el argumento de rondas. |
+| `--reps=50` | Repite el torneo y promedia, para que el azar no decida el ranking. |
+| `--seed=1` | Hace el resultado reproducible. Sin semilla, cada corrida es distinta. |
+
+Sin estas opciones el torneo es el clásico de siempre.
+
+Notas para escribir estrategias:
+
+- `play` debe depender **solo** de los historiales. No guardes estado en variables
+  fuera de `play`: se comparte entre todos los matches y los contamina.
+- Recibís copias de los historiales; modificarlos no afecta al juego.
+- El nombre de cada estrategia debe ser único.
+
 ## Añadir estrategias (para estudiantes)
 
 1. Ir a la carpeta `src/strategies/`.

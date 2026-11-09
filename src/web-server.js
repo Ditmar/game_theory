@@ -2,10 +2,14 @@
 const express = require('express');
 const path = require('path');
 const fs = require('fs');
-const { Strategy, runTournament } = require('./core/game');
+const { Strategy, runTournament, getGame } = require('./core/game');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
+
+// Juego activo: node src/web-server.js --game=turnos   (por defecto: clasico)
+const gameArg = process.argv.slice(2).find((a) => a.startsWith('--game='));
+const GAME = getGame(gameArg ? gameArg.split('=')[1] : 'clasico');
 
 app.use(express.static(path.join(__dirname, '../public')));
 app.use(express.json());
@@ -39,6 +43,10 @@ function loadStrategies() {
   return strategies;
 }
 
+app.get('/api/game', (req, res) => {
+  res.json({ name: GAME.name, label: GAME.label, payoffs: GAME.payoffs });
+});
+
 app.get('/api/strategies', (req, res) => {
   try {
     const strategies = loadStrategies();
@@ -71,7 +79,7 @@ app.post('/api/tournament', (req, res) => {
     console.log(`Ejecutando torneo web con ${strategies.length} estrategias y ${rounds} rondas`);
     
     const startTime = Date.now();
-    const { results, ranking } = runTournament(strategies, rounds);
+    const { results, ranking } = runTournament(strategies, rounds, { payoffs: GAME.payoffs });
     const executionTime = Date.now() - startTime;
 
     const stats = calculateTournamentStats(results, strategies);
@@ -201,13 +209,7 @@ function generateSimulation(strategyA, strategyB, rounds) {
   let scoreA = 0;
   let scoreB = 0;
 
-  // Matriz de pagos
-  const PAYOFFS = {
-    CC: [3, 3],
-    CD: [0, 5],
-    DC: [5, 0],
-    DD: [1, 1],
-  };
+  const PAYOFFS = GAME.payoffs;
 
   for (let i = 0; i < rounds; i++) {
     // Obtener movimientos
@@ -275,6 +277,7 @@ app.get('/simulate', (req, res) => {
 
 app.listen(PORT, () => {
   console.log(`🌐 Servidor web iniciado en http://localhost:${PORT}`);
+  console.log(`🎲 Juego: ${GAME.label} (${GAME.name})`);
   console.log(`📊 Torneo principal: http://localhost:${PORT}`);
   console.log(`🎮 Simulación: http://localhost:${PORT}/simulate`);
   console.log('💡 Usa Ctrl+C para detener el servidor');
